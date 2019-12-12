@@ -1,0 +1,249 @@
+Model_testowy
+id:                      1
+x range:                 200
+z range:                 200
+step:                    2
+all nodes:               10000
+horizontal nodes:        40
+vertical nodes:          40
+thickness of 1st layer:  2
+width of middle node:    2
+is regular (0-no 1-yes): 1
+density:                 2100.000000
+resistivity:             1000.000000
+intensity:               50000.000000
+declination:             0.000000
+inclination:             65.000000
+angle of magnetisation:  30.000000
+susceptibility:          0.000050
+ratioX:                  1.000000
+ratioZ:                  1.000000
+color                 r: 0.490471
+                      g: 0.744610
+                      b: 0.796872
+no. of all layers:       2
+no. of all boundaries:   10
+no. of all vertices:     10
+*** Layer no.              1
+    id:                    1
+    material id:           0
+    used:                  0
+    density:               2100.000000
+    density range min:     2000.000000
+    density range max:     2500.000000
+    resistivity:           1000.000000
+    resistivity range min: 990.000000
+    resistivity range max: 1010.000000
+    intensity:             50000.000000
+    declination:           0.000000
+    inclination:           65.000000
+    angle of magnetisation:30.000000
+    susceptibility:        0.000050
+    susceptibility range min: 0.000000
+    susceptibility range max: 0.000100
+    color               r: 0.490471
+                        g: 0.744610
+                        b: 0.796872
+*** Layer no.              2
+    id:                    2
+    material id:           0
+    used:                  0
+    density:               3000.000000
+    density range min:     2600.000000
+    density range max:     3600.000000
+    resistivity:           1000.000000
+    resistivity range min: 990.000000
+    resistivity range max: 1010.000000
+    intensity:             65.000000
+    declination:           0.000000
+    inclination:           55000.000000
+    angle of magnetisation:30.000000
+    susceptibility:        0.0500
+    susceptibility range min: 0.000005
+    susceptibility range max: 1.000000
+    color               r: 0.898680
+                        g: 0.584054
+                        b: 0.159182
+    ** boundary no.        1
+       id:                 1
+       fixed:              1
+       used:               0
+    ** boundary no.        2
+       id:                 2
+       fixed:              1
+       used:               0
+    ** boundary no.        3
+       id:                 3
+       fixed:              1
+       used:               0
+    ** boundary no.        4
+       id:                 4
+       fixed:              1
+       used:               0
+    ** boundary no.        5
+       id:                 5
+       fixed:              0
+       used:               0
+    ** boundary no.        6
+       id:                 6
+       fixed:              0
+       used:               0
+    ** boundary no.        7
+       id:                 7
+       fixed:              0
+       used:               0
+    ** boundary no.        8
+       id:                 8
+       fixed:              0
+       used:               0
+    ** boundary no.        9
+       id:                 9
+       fixed:              0
+       used:               0
+    ** boundary no.        10
+       id:                 10
+       fixed:              0
+       used:               0
+       * vertex no.        1
+         id:               1
+         x:                0.000000
+         z:                0.000000
+         fixed_x:          1
+         fixed_z:          1
+         used:             0
+         Xmin  :           0.000000
+         Xmax  :           200.000000
+         Zmin  :           0.000000
+         Zmax  :           200.000000
+       * vertex no.        2
+         id:               2
+         x:                200.000000
+         z:                0.000000
+         fixed_x:          1
+         fixed_z:          1
+         used:             0
+         Xmin  :           0.000000
+         Xmax  :           200.000000
+         Zmin  :           0.000000
+         Zmax  :           200.000000
+       * vertex no.        3
+         id:               3
+         x:                200.000000
+         z:                200.000000
+         fixed_x:          1
+         fixed_z:          1
+         used:             0
+         Xmin  :           0.000000
+         Xmax  :           200.000000
+         Zmin  :           0.000000
+         Zmax  :           200.000000
+       * vertex no.        4
+         id:               4
+         x:                0.000000
+         z:                200.000000
+         fixed_x:          1
+         fixed_z:          1
+         used:             0
+         Xmin  :           0.000000
+         Xmax  :           200.000000
+         Zmin  :           0.000000
+         Zmax  :           200.000000
+       * vertex no.        5
+         id:               5
+         x:                30.00000
+         z:                198.00000
+         fixed_x:          0
+         fixed_z:          0
+         used:             0
+         Xmin  :           0.000000
+         Xmax  :           200.000000
+         Zmin  :           0.000000
+         Zmax  :           200.000000
+       * vertex no.        6
+         id:               6
+         x:                30.00000 
+         z:                110.00000
+         fixed_x:          0
+         fixed_z:          0
+         used:             0
+         Xmin  :           0.000000  
+         Xmax  :           200.000000
+         Zmin  :           0.000000  
+         Zmax  :           200.00000
+       * vertex no.        7
+         id:               7
+         x:                30.000000 
+         z:                20.000000
+         fixed_x:          0
+         fixed_z:          0
+         used:             0
+         Xmin  :           0.000000  
+         Xmax  :           200.000000
+         Zmin  :           0.000000  
+         Zmax  :           200.0000000
+       * vertex no.        8
+         id:               8
+         x:                110.000000
+         z:                20.000000
+         fixed_x:          0
+         fixed_z:          0
+         used:             0
+         Xmin  :           0.000000
+         Xmax  :           200.000000
+         Zmin  :           0.000000
+         Zmax  :           200.000000
+       * vertex no.        9
+         id:               9
+         x:                110.000000
+         z:                110.000000
+         fixed_x:          0
+         fixed_z:          0
+         used:             0
+         Xmin  :           0.000000
+         Xmax  :           200.000000
+         Zmin  :           0.000000
+         Zmax  :           200.000000
+       * vertex no.        10
+         id:               10
+         x:                110.000000
+         z:                198.000000
+         fixed_x:          0
+         fixed_z:          0
+         used:             0
+         Xmin  :           0.000000
+         Xmax  :           200.000000
+         Zmin  :           0.000000
+         Zmax  :           200.000000
+IDS GO HERE:
+*** Layer no. 1 id: 1
+    ** boundary no. 1 id: 1
+       * vertex no. 1 id: 1
+       * vertex no. 2 id: 2
+    ** boundary no. 2 id: 2
+       * vertex no. 2 id: 2
+       * vertex no. 3 id: 3
+    ** boundary no. 3 id: 3
+       * vertex no. 3 id: 3
+       * vertex no. 4 id: 4
+    ** boundary no. 4 id: 4
+       * vertex no. 4 id: 4
+       * vertex no. 1 id: 1
+*** Layer no. 2 id: 2
+    ** boundary no. 5 id: 5
+       * vertex no. 5 id: 5
+       * vertex no. 6 id: 6
+    ** boundary no. 6 id: 6
+       * vertex no. 6 id: 6
+       * vertex no. 7 id: 7
+    ** boundary no. 7 id: 7
+       * vertex no. 7 id: 7
+       * vertex no. 8 id: 8
+    ** boundary no. 8 id: 8
+       * vertex no. 8 id: 8
+       * vertex no. 9 id: 9 
+    ** boundary no. 9 id: 9
+       * vertex no. 9 id: 9
+       * vertex no. 10 id: 10 
+    ** boundary no. 10 id: 10
+       * vertex no. 10 id: 10
+       * vertex no. 5 id: 5

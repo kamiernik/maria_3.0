@@ -1,0 +1,142 @@
+#1 Setting environmental variable PKG_CFLAGS
+
+export PKG_CFLAGS="-lm `pkg-config gtk+-2.0 --cflags` `pkg-config gtk+-2.0 --libs`"
+
+#2 Compiling Gravity_new.c and Magneto_new.c into dynamic libraries
+
+R CMD SHLIB Gravity_new.c $(pkg-config --cflags --libs glib-2.0)
+R CMD SHLIB Magneto_new.c $(pkg-config --cflags --libs glib-2.0)
+
+#3 Declaring example vector with starting model and vectors with boundaries in R environment
+
+R
+rm(list=ls())
+x <- c(30.0, 198.0, 30.0, 110.0, 30.0, 20.0, 110.0, 20.0, 110.0, 110.0, 110.0, 198.0, 2100.0, 0.00005, 3000.0, 0.05)
+v_lower <- c(0,0,0,0,0,0,0,0,0,0,0,0,2000,0.0,2600,0.000005)
+v_upper <- c(200,200,200,200,200,200,200,200,200,200,200,200,2500,0.0001,3600,1.0)
+
+#4 Loading multicriterial optimization package and wrappers.R with definition of transition dynamic C libraries into R
+require("mco")
+source("wrappers.R")
+
+(#5) Checking particular target functions
+
+system.time(G <- Gravity_new(x,0))
+system.time(MG <- Magneto_new(x,0))
+
+#6 Declaring maria3 function, returning vector with two elements - misfits for gravity and magnetometric forward solver, respectively
+
+maria3 <- function(x)
+{
+	y <- numeric(2)
+	y[1] <- Gravity_new(x,0)
+	y[2] <- Magneto_new(x,0)
+	return(y)
+}
+
+#7 Launching nsga2 function in serial way, for population of 100 individuals and 100 generations
+
+system.time(resNSGA2_maria3 <- nsga2(maria3, 16, 2, lower.bounds=v_lower, upper.bounds=v_upper, popsize=100, generations=100))
+
+#8 Parallelization on CPU - loading library
+
+require(parallel)
+
+#9 Defining function which is supposed to be launched on every core
+
+maria3_wrapper <- function(ls)
+{
+	require("mco")
+	source("wrappers.R")
+	x <- c(30.0, 198.0, 30.0, 110.0, 30.0, 20.0, 110.0, 20.0, 110.0, 110.0, 110.0, 198.0, 2100.0, 0.00005, 3000.0, 0.05)
+
+	maria3 <- function(x)
+	{
+		y <- numeric(2)
+		y[1] <- Gravity_new(x,0)
+		y[2] <- Magneto_new(x,0)
+		return(y)
+	}
+
+	nsga2(maria3, ls$input_args, ls$output_args, lower.bounds=ls$low, upper.bounds=ls$up, popsize=ls$ps, generations=ls$gen)
+}
+
+#10 Making cluster for 63 cores
+
+cl_63 <- makeCluster(63)
+
+#11 Preparing a list of list - every sublist has parameters which will be applied on corresponding core
+
+par_list <- list(
+list(input_args=16, output_args=2, low=v_lower, up=v_upper, ps=16, gen=1000),
+list(input_args=16, output_args=2, low=v_lower, up=v_upper, ps=16, gen=1000),
+list(input_args=16, output_args=2, low=v_lower, up=v_upper, ps=16, gen=1000),
+list(input_args=16, output_args=2, low=v_lower, up=v_upper, ps=16, gen=1000),
+list(input_args=16, output_args=2, low=v_lower, up=v_upper, ps=16, gen=1000),
+list(input_args=16, output_args=2, low=v_lower, up=v_upper, ps=16, gen=1000),
+list(input_args=16, output_args=2, low=v_lower, up=v_upper, ps=16, gen=1000),
+list(input_args=16, output_args=2, low=v_lower, up=v_upper, ps=16, gen=1000),
+list(input_args=16, output_args=2, low=v_lower, up=v_upper, ps=16, gen=1000),
+list(input_args=16, output_args=2, low=v_lower, up=v_upper, ps=16, gen=1000),
+list(input_args=16, output_args=2, low=v_lower, up=v_upper, ps=16, gen=1000),
+list(input_args=16, output_args=2, low=v_lower, up=v_upper, ps=16, gen=1000),
+list(input_args=16, output_args=2, low=v_lower, up=v_upper, ps=16, gen=1000),
+list(input_args=16, output_args=2, low=v_lower, up=v_upper, ps=16, gen=1000),
+list(input_args=16, output_args=2, low=v_lower, up=v_upper, ps=16, gen=1000),
+list(input_args=16, output_args=2, low=v_lower, up=v_upper, ps=16, gen=1000),
+list(input_args=16, output_args=2, low=v_lower, up=v_upper, ps=16, gen=1000),
+list(input_args=16, output_args=2, low=v_lower, up=v_upper, ps=16, gen=1000),
+list(input_args=16, output_args=2, low=v_lower, up=v_upper, ps=16, gen=1000),
+list(input_args=16, output_args=2, low=v_lower, up=v_upper, ps=16, gen=1000),
+list(input_args=16, output_args=2, low=v_lower, up=v_upper, ps=16, gen=1000),
+list(input_args=16, output_args=2, low=v_lower, up=v_upper, ps=16, gen=1000),
+list(input_args=16, output_args=2, low=v_lower, up=v_upper, ps=16, gen=1000),
+list(input_args=16, output_args=2, low=v_lower, up=v_upper, ps=16, gen=1000),
+list(input_args=16, output_args=2, low=v_lower, up=v_upper, ps=16, gen=1000),
+list(input_args=16, output_args=2, low=v_lower, up=v_upper, ps=16, gen=1000),
+list(input_args=16, output_args=2, low=v_lower, up=v_upper, ps=16, gen=1000),
+list(input_args=16, output_args=2, low=v_lower, up=v_upper, ps=16, gen=1000),
+list(input_args=16, output_args=2, low=v_lower, up=v_upper, ps=16, gen=1000),
+list(input_args=16, output_args=2, low=v_lower, up=v_upper, ps=16, gen=1000),
+list(input_args=16, output_args=2, low=v_lower, up=v_upper, ps=16, gen=1000),
+list(input_args=16, output_args=2, low=v_lower, up=v_upper, ps=16, gen=1000),
+list(input_args=16, output_args=2, low=v_lower, up=v_upper, ps=16, gen=1000),
+list(input_args=16, output_args=2, low=v_lower, up=v_upper, ps=16, gen=1000),
+list(input_args=16, output_args=2, low=v_lower, up=v_upper, ps=16, gen=1000),
+list(input_args=16, output_args=2, low=v_lower, up=v_upper, ps=16, gen=1000),
+list(input_args=16, output_args=2, low=v_lower, up=v_upper, ps=16, gen=1000),
+list(input_args=16, output_args=2, low=v_lower, up=v_upper, ps=16, gen=1000),
+list(input_args=16, output_args=2, low=v_lower, up=v_upper, ps=16, gen=1000),
+list(input_args=16, output_args=2, low=v_lower, up=v_upper, ps=16, gen=1000),
+list(input_args=16, output_args=2, low=v_lower, up=v_upper, ps=16, gen=1000),
+list(input_args=16, output_args=2, low=v_lower, up=v_upper, ps=16, gen=1000),
+list(input_args=16, output_args=2, low=v_lower, up=v_upper, ps=16, gen=1000),
+list(input_args=16, output_args=2, low=v_lower, up=v_upper, ps=16, gen=1000),
+list(input_args=16, output_args=2, low=v_lower, up=v_upper, ps=16, gen=1000),
+list(input_args=16, output_args=2, low=v_lower, up=v_upper, ps=16, gen=1000),
+list(input_args=16, output_args=2, low=v_lower, up=v_upper, ps=16, gen=1000),
+list(input_args=16, output_args=2, low=v_lower, up=v_upper, ps=16, gen=1000),
+list(input_args=16, output_args=2, low=v_lower, up=v_upper, ps=16, gen=1000),
+list(input_args=16, output_args=2, low=v_lower, up=v_upper, ps=16, gen=1000),
+list(input_args=16, output_args=2, low=v_lower, up=v_upper, ps=16, gen=1000),
+list(input_args=16, output_args=2, low=v_lower, up=v_upper, ps=16, gen=1000),
+list(input_args=16, output_args=2, low=v_lower, up=v_upper, ps=16, gen=1000),
+list(input_args=16, output_args=2, low=v_lower, up=v_upper, ps=16, gen=1000),
+list(input_args=16, output_args=2, low=v_lower, up=v_upper, ps=16, gen=1000),
+list(input_args=16, output_args=2, low=v_lower, up=v_upper, ps=16, gen=1000),
+list(input_args=16, output_args=2, low=v_lower, up=v_upper, ps=16, gen=1000),
+list(input_args=16, output_args=2, low=v_lower, up=v_upper, ps=16, gen=1000),
+list(input_args=16, output_args=2, low=v_lower, up=v_upper, ps=16, gen=1000),
+list(input_args=16, output_args=2, low=v_lower, up=v_upper, ps=16, gen=1000),
+list(input_args=16, output_args=2, low=v_lower, up=v_upper, ps=16, gen=1000),
+list(input_args=16, output_args=2, low=v_lower, up=v_upper, ps=16, gen=1000),
+list(input_args=16, output_args=2, low=v_lower, up=v_upper, ps=16, gen=1000))
+
+#12 Launching parallel command
+
+system.time(results_par <- parSapply(cl_63, par_list, maria3_wrapper))
+
+#13 Closing cluster
+
+stopCluster(cl_63)
+
