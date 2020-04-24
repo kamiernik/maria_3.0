@@ -1,0 +1,119 @@
+The functions that solve forward problems were separated from MARIA and transformed into stand-alone programs that could read data from a file and have a vector of 16 elements and misfits as their parameters as a starting model. Subsequently, the main() functions of these programs were renamed (Lst. 1).
+
+void Gravity_new(double *p_model_params, double *misfit)
+void Magneto_new(double *p_model_params, double *misfit)
+
+Listing 1 Headers of modified C functions which implement forward solvers
+
+Subsequently, the prepared functions were compiled into dynamic libraries (Lst. 2). 
+
+R CMD SHLIB Gravity_new.c $( pkg−config −−cflags −−libs glib −2.0 )
+R CMD SHLIB Magneto_new.c $( pkg−config −−cflags −−libs glib −2.0 )
+
+Listing 2 Compilation of modified C forward-solver functions into dynamic libraries
+
+Next, a wrappers.R file was created (see Lst 3). Its role was to load the dynamic libraries and to create R functions based on functions written in C code. It allowed these functions to be loaded into the R environment and the GV and MG forward solvers to be used in combination with packages that implement optimization algorithms as well as many other tools. 
+
+dyn.load("Gravity_new.so")
+Gravity_new <− function(model_params, misfit)
+{
+    misfit = 0
+    res <− .C("Gravity_new", as.double(model_params), as.double(misfit))
+    return(as.numeric(res[2]))
+}
+
+dyn.load("Magneto_new.so")
+Magneto_new <− function(model_params, misfit)
+{
+    misfit = 0
+    res <− .C("Magneto_new", as.double(model_params), as.double(misfit))
+    return(as.numeric(res[2]))
+}
+
+Listing 3 Content of the wrappers.R file
+
+Subsequently, the maria3 function was created (Lst. 4), which is used as a parameter in the nsga2 function. 
+
+maria3 <− function(x)
+{
+    y <− numeric(2)
+    y[1] <− Gravity_new(x)
+    y[2] <− Magneto_new(x)
+    return (y)
+}
+x = c(30.0, 198.0, 30.0, 110.0, 30.0, 20.0, 110.0, 20.0, 110.0,    
+      110.0, 110.0, 198.0, 2100.0, 0.00005, 3000.0, 0.05)
+res_maria <− maria3(x)
+res_maria
+> [1] 1.978516e+01 2.545874e+09
+
+Listing 4 maria3 function
+
+The next step was to use the nsga2 function from the mco package for multicriteria optimization. An input model with geometry, density and susceptibility parameters (x) and vectors with upper (v_upper) and lower (v_lower) boundaries of variables’ variability during the inversion process were introduced into the nsga2 function (Lst. 5). 
+
+require("mco")
+x = c(30.0, 198.0, 30.0, 110.0, 30.0, 20.0, 110.0, 20.0, 110.0, 
+      110.0, 110.0, 198.0, 2100.0, 0.00005, 3000.0, 0.05)
+v_lower <− c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2000, 0.0, 
+             2600, 0.000005)
+v_upper <− c(200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 
+             200, 200, 2500, 0.0001, 3600, 1.0)
+resNSGA2_maria3 <− nsga2(maria3, 16, 2, lower.bounds=v_lower, upper.bounds=v_upper, popsize=1000, generations=100)
+
+Listing 5 Call of nsga2 function and initialization its parameters
+
+Computations were performed for 100 generations and parallelized with the parSapply function from the parallel package for 63 cores, launching 16 populations for each core, summing up the results into one solution set with 1008 points. 
+
+First, the parallel library was installed and loaded in the R environment (Lst. 6). 
+
+install.packages("parallel")
+require("parallel")
+
+Listing 6 Installing and loading the parallel package in the R environment
+After that, the cluster consisting of 63 cores was created (Lst. 7).
+
+cl_63 <− makeCluster(63)
+Listing 7 Creating a cluster of 63 cores
+
+Then, the list of parameters for the cores was created (Lst. 8) as a list of lists in which every sublist contains the parameters for a single core.
+
+par_list <− list(list(input_args=16, output_args=2, low=v_lower, up=v_upper,
+(...)
+list(input_args=16, output_args=2, low=v_lower, up=v_upper, ps=16, gen=1000), ps=16, gen=1000))
+
+Listing 8 Creation of the parameter list for cores
+
+Next, the nsga2_maria3_wrapper function was created, which allows the parallel calling of the nsga2 function (Lst. 9).
+
+nsga2_maria3_wrapper <− function(ls)
+{
+    require("mco")
+    source("wrappers.R")
+    x <− c(30.0, 198.0, 30.0, 110.0, 30.0, 20.0, 110.0, 20.0,  
+           110.0, 110.0, 110.0, 198.0, 2100.0, 0.00005, 3000.0, 0.05)
+
+    maria3 <− function(x)
+    {
+        y <− numeric(2)
+        y[1] <− Gravity_new(x, 0)
+        y[2] <− Magneto_new(x, 0)
+        return(y)
+    }
+    nsga2(maria3, ls$input_args, ls$output_args, lower.bounds=ls$low,  
+          upper.bounds=ls$up, popsize=ls$ps, generations=ls$gen)
+}
+
+Listing 9 Creating the nsga2_maria3_wrapper function, which allows parallel calling of nsga2 
+
+Finally, nsga2_maria3_wrapper was called on cluster cl_63 (Lst. 10). 
+
+results_par <− parSapply(cl_63, par_list, nsga2_maria3_wrapper)
+
+Listing 10 Call of nsga2_maria3_wrapper on cl_63 cluster 
+
+As the last step, the cluster created at the beginning was stopped (Lst. 11).
+
+stopCluster(cl_63)
+ 
+Listing 11 Stopping the cluster for parallel computations
+
