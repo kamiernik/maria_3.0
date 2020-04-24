@@ -5,7 +5,7 @@ Codes for an article Application of NSGA-II algorithm in Pareto joint inversion 
 Instruction in file maria_3.0_instruction
 
 ## Code description
-With more detail in file maria_3.0_code_details
+More details about code in file maria_3.0_code_details
 
 ### Language
 C and R
