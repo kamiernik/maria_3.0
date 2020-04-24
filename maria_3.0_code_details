@@ -1,4 +1,5 @@
-The functions that solve forward problems were separated from MARIA and transformed into stand-alone programs that could read data from a file and have a vector of 16 elements and misfits as their parameters as a starting model. Subsequently, the main() functions of these programs were renamed (Lst. 1).
+The functions that solve forward problems were separated from MARIA and transformed into stand-alone programs that could read data
+from a file and have a vector of 16 elements and misfits as their parameters as a starting model. Subsequently, the main() functions of these programs were renamed (Lst. 1).
 
 void Gravity_new(double *p_model_params, double *misfit)
 void Magneto_new(double *p_model_params, double *misfit)
