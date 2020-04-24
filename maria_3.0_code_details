@@ -1,5 +1,6 @@
 The functions that solve forward problems were separated from MARIA and transformed into stand-alone programs that could read data
-from a file and have a vector of 16 elements and misfits as their parameters as a starting model. Subsequently, the main() functions of these programs were renamed (Lst. 1).
+from a file and have a vector of 16 elements and misfits as their parameters as a starting model. Subsequently, the main() functions
+of these programs were renamed (Lst. 1).
 
 void Gravity_new(double *p_model_params, double *misfit)
 void Magneto_new(double *p_model_params, double *misfit)
@@ -13,7 +14,9 @@ R CMD SHLIB Magneto_new.c $( pkg−config −−cflags −−libs glib −2.0 )
 
 Listing 2 Compilation of modified C forward-solver functions into dynamic libraries
 
-Next, a wrappers.R file was created (see Lst 3). Its role was to load the dynamic libraries and to create R functions based on functions written in C code. It allowed these functions to be loaded into the R environment and the GV and MG forward solvers to be used in combination with packages that implement optimization algorithms as well as many other tools. 
+Next, a wrappers.R file was created (see Lst 3). Its role was to load the dynamic libraries and to create R functions based on functions
+written in C code. It allowed these functions to be loaded into the R environment and the GV and MG forward solvers to be used
+in combination with packages that implement optimization algorithms as well as many other tools. 
 
 dyn.load("Gravity_new.so")
 Gravity_new <− function(model_params, misfit)
@@ -50,7 +53,9 @@ res_maria
 
 Listing 4 maria3 function
 
-The next step was to use the nsga2 function from the mco package for multicriteria optimization. An input model with geometry, density and susceptibility parameters (x) and vectors with upper (v_upper) and lower (v_lower) boundaries of variables’ variability during the inversion process were introduced into the nsga2 function (Lst. 5). 
+The next step was to use the nsga2 function from the mco package for multicriteria optimization. An input model with geometry,
+density and susceptibility parameters (x) and vectors with upper (v_upper) and lower (v_lower) boundaries of variables’ variability
+during the inversion process were introduced into the nsga2 function (Lst. 5). 
 
 require("mco")
 x = c(30.0, 198.0, 30.0, 110.0, 30.0, 20.0, 110.0, 20.0, 110.0, 
@@ -63,7 +68,8 @@ resNSGA2_maria3 <− nsga2(maria3, 16, 2, lower.bounds=v_lower, upper.bounds=v_u
 
 Listing 5 Call of nsga2 function and initialization its parameters
 
-Computations were performed for 100 generations and parallelized with the parSapply function from the parallel package for 63 cores, launching 16 populations for each core, summing up the results into one solution set with 1008 points. 
+Computations were performed for 100 generations and parallelized with the parSapply function from the parallel package for 63 cores,
+launching 16 populations for each core, summing up the results into one solution set with 1008 points. 
 
 First, the parallel library was installed and loaded in the R environment (Lst. 6). 
 
@@ -76,7 +82,8 @@ After that, the cluster consisting of 63 cores was created (Lst. 7).
 cl_63 <− makeCluster(63)
 Listing 7 Creating a cluster of 63 cores
 
-Then, the list of parameters for the cores was created (Lst. 8) as a list of lists in which every sublist contains the parameters for a single core.
+Then, the list of parameters for the cores was created (Lst. 8) as a list of lists in which every sublist contains the parameters 
+for a single core.
 
 par_list <− list(list(input_args=16, output_args=2, low=v_lower, up=v_upper,
 (...)
